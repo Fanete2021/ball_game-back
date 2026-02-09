@@ -1,5 +1,3 @@
-CREATE DATABASE game;
-
 CREATE TABLE IF NOT EXISTS sessions (
     sessionId TEXT PRIMARY KEY,
     nickname TEXT NOT NULL,
