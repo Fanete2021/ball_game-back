@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
+
 public class DatabaseConfig {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseConfig.class);
     private static HikariDataSource dataSource;
@@ -17,17 +19,12 @@ public class DatabaseConfig {
 
             HikariConfig config = new HikariConfig();
 
-            config.setJdbcUrl("jdbc:postgresql://localhost:5432/game");
-            String dbHost = System.getenv("DB_HOST") != null ?
-                    System.getenv("DB_HOST") : "postgres";
-            String dbPort = System.getenv("DB_PORT") != null ?
-                    System.getenv("DB_PORT") : "5432";
-            String dbName = System.getenv("DB_NAME") != null ?
-                    System.getenv("DB_NAME") : "game";
-            String dbUser = System.getenv("DB_USER") != null ?
-                    System.getenv("DB_USER") : "postgres";
-            String dbPassword = System.getenv("DB_PASSWORD") != null ?
-                    System.getenv("DB_PASSWORD") : "root";
+
+            String dbHost = Optional.ofNullable(System.getenv("DB_HOST")).orElse("postgres");
+            String dbPort = Optional.ofNullable(System.getenv("DB_PORT")).orElse("5432");
+            String dbName = Optional.ofNullable(System.getenv("DB_NAME")).orElse("game");
+            String dbUser = Optional.ofNullable(System.getenv("DB_USER")).orElse("postgres");
+            String dbPassword = Optional.ofNullable(System.getenv("DB_PASSWORD")).orElse("root");
 
             String jdbcUrl = String.format(
                     "jdbc:postgresql://%s:%s/%s",
