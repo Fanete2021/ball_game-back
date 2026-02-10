@@ -1,3 +1,4 @@
+
 package com.game.utils;
 
 import org.slf4j.Logger;
@@ -7,25 +8,19 @@ public class LogUtil {
     private static final Logger requestLogger = LoggerFactory.getLogger("REQUEST_LOG");
 
     public static void logRepoStart(String repoName, String method, Object... params) {
-        Logger logger = LoggerFactory.getLogger(repoName);
-        String paramStr = buildParamString(params);
-        logger.info("[{}] Запуск: {} {}", repoName, method, paramStr);
+        log(repoName, "Запуск", method, 0, null, null, params);
     }
 
     public static void logRepoSuccess(String repoName, String method, long startTime, Object... results) {
-        Logger logger = LoggerFactory.getLogger(repoName);
         long duration = System.currentTimeMillis() - startTime;
-        String resultStr = buildParamString(results);
-
-        logger.info("[{}] Успех: {} {} | время={}ms", repoName, method, resultStr, duration);
+        log(repoName, "Успех", method, duration, null, null, results);
         requestLogger.info("REPO | {} | {} | время={}ms",repoName, method, duration);
     }
 
     public static void logRepoError(String repoName, String method, long startTime, String error, Exception e) {
-        Logger logger = LoggerFactory.getLogger(repoName);
         long duration = System.currentTimeMillis() - startTime;
 
-        logger.error("[{}] Ошибка: {} | время={}ms | {}",repoName, method, duration, error, e);
+        log(repoName, "Ошибка", method, duration, error, e);
         requestLogger.error("REPO | {} | {} | время={}ms | ошибка={}", repoName, method, duration, error);
     }
 
@@ -39,6 +34,16 @@ public class LogUtil {
         Logger logger = LoggerFactory.getLogger(repoName);
         long duration = System.currentTimeMillis() - startTime;
         logger.warn("[{}: {}] {} | время={}ms", repoName, method, message, duration);
+    }
+
+    private static void log(String repoName, String status, String method, long duration, String error, Exception e, Object... params) {
+        Logger logger = LoggerFactory.getLogger(repoName);
+        String paramStr = buildParamString(params);
+        if ("Ошибка".equals(status)) {
+            logger.error("[{}] {}: {} | время={}ms | {}", repoName, status, method, duration, error, e);
+        } else {
+            logger.info("[{}] {}: {} {} | время={}ms", repoName, status, method, paramStr, duration);
+        }
     }
 
     private static String buildParamString(Object... params) {
